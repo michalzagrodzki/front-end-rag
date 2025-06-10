@@ -1,7 +1,7 @@
 // src/components/ChatWindow.tsx
 import React, { useEffect, useRef } from 'react'
 import type { Message } from '../store/chatStore'
-import { ScrollArea } from '@/components/ui/scroll-area'
+import { ScrollArea } from '@/components/ui'
 import { cn } from '@/lib/utils'
 
 export interface ChatWindowProps {
