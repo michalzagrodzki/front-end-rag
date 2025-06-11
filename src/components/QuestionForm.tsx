@@ -1,7 +1,7 @@
 // src/components/QuestionForm.tsx
 import React from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { Button, Input } from '@/components/ui'
+import { Loader2 } from 'lucide-react'  
 
 export interface QuestionFormProps {
   question: string
@@ -19,14 +19,15 @@ export const QuestionForm: React.FC<QuestionFormProps> = ({
   return (
     <form onSubmit={onSubmit} className="flex space-x-2">
       <Input
-        placeholder="Type your question..."
+        className="flex-1"
+        placeholder="Type your question…"
         value={question}
         onChange={(e) => setQuestion(e.target.value)}
         disabled={disabled}
-        className="flex-1"
       />
+
       <Button type="submit" disabled={disabled}>
-        Send
+        {disabled ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Send'}
       </Button>
     </form>
   )

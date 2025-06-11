@@ -12,6 +12,12 @@ export interface QueryResponse {
   conversation_id?: string;
 }
 
+export interface AskStreamResult {
+  answer: string;
+  conversation_id?: string; // echoed or assigned by backend
+  headers: Headers;
+}
+
 export const uploadPdf = (file: File) => {
   const form = new FormData();
   form.append("file", file, file.name);
@@ -29,40 +35,39 @@ export const ask = (question: string, conversationId?: string) =>
     conversation_id: conversationId ?? null,
   });
 
-export const askStream = (
+export const askStream = async (
   question: string,
-  conversationId: string | null,
-  onToken: (token: string) => void
-) =>
-  new Promise<string>((resolve, reject) => {
-    const url = new URL("/v1/query-stream", http.defaults.baseURL);
-    const es = new EventSource(url.toString(), {
-      withCredentials: true,
-    });
-
-    es.onerror = (e) => {
-      es.close();
-      reject(e);
-    };
-
-    let answer = "";
-    es.onmessage = (ev) => {
-      if (ev.data === "[DONE]") {
-        es.close();
-        resolve(answer);
-        return;
-      }
-      answer += ev.data;
-      onToken(ev.data);
-    };
-
-    es.addEventListener("open", () => {
-      http.post(url.pathname, {
-        question,
-        conversation_id: conversationId ?? null,
-      });
-    });
+  conversationId?: string
+): Promise<AskStreamResult> => {
+  const res = await fetch(`${http.defaults.baseURL}/v1/query-stream`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      question,
+      conversation_id: conversationId ?? null,
+    }),
   });
+
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+  }
+
+  const reader = res.body!.getReader();
+  const decoder = new TextDecoder();
+  let answer = "";
+
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    answer += decoder.decode(value, { stream: true });
+  }
+
+  return {
+    answer,
+    conversation_id: res.headers.get("x-conversation-id") || undefined,
+    headers: res.headers,
+  };
+};
 
 export const fetchHistory = (conversationId: string) =>
   http.get<{ question: string; answer: string }[]>(

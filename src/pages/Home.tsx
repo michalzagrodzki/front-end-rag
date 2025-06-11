@@ -1,23 +1,39 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { QuestionForm } from '../components/QuestionForm';
-import { ask } from '../services/api';
 import { Card, CardContent } from '@/components/ui';
+import { useChatStore } from '@/store/chatStore';
 const Home: React.FC = () => {
+  const {
+    conversationId,
+    loadHistory,
+    sendMessage,
+    clearChat,
+  } = useChatStore()
+  
+  const { conversationId: routeCid } = useParams<{ conversationId?: string }>()
   const [question, setQuestion] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!question.trim()) return;
-    try {
-      const response = await ask(question);
-      const conversationId = response.headers['x-conversation-id'];
-      navigate(`/chat/${conversationId}`);
-    } catch (error) {
-      console.error(error);
+  useEffect(() => {
+    clearChat()
+    if (routeCid) loadHistory(routeCid)
+  }, [loadHistory, clearChat, routeCid])
+
+  /* 🔑 whenever the store gets its first UUID, push it into the URL */
+  useEffect(() => {
+    if (!routeCid && conversationId) {
+      navigate(`/chat/${conversationId}`, { replace: true })
     }
-  };
+  }, [conversationId, routeCid, navigate])
+
+  /* handleSubmit just delegates to the store */
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!question.trim()) return
+    await sendMessage(question)               // store now guarantees a UUID
+    setQuestion('')
+  }
 
   return (
     <div className="max-w-2xl mx-auto p-4">

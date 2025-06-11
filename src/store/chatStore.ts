@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import { ask, fetchHistory } from "../services/api";
+import { askStream, fetchHistory } from "../services/api";
+import { v4 as uuidv4 } from "uuid";
 
 export interface Message {
   role: "user" | "assistant";
@@ -32,31 +33,37 @@ export const useChatStore = create<ChatState>()(
       set(() => ({ conversationId: undefined, messages: [], error: null }));
     },
 
-    sendMessage: async (text) => {
-      set({ loading: true, error: null });
+    async sendMessage(text: string) {
+      // optimistic user bubble
+      set((s) => ({
+        messages: [...s.messages, { role: "user", text }],
+        loading: true,
+        error: null,
+      }));
 
-      const { conversationId, messages } = get();
+      // ensure we have a UUID before first request
+      let cid = get().conversationId;
+      if (!cid) {
+        cid = uuidv4();
+        set({ conversationId: cid });
+      }
 
       try {
-        const { data, headers } = await ask(text, conversationId);
-        const newCID =
-          headers["x-conversation-id"] ??
-          data.conversation_id ??
-          conversationId;
+        const { answer, conversation_id } = await askStream(text, cid);
 
-        set({
-          conversationId: newCID,
-          messages: [
-            ...messages,
-            { role: "user", text },
-            { role: "assistant", text: data.answer },
-          ],
+        const finalCID = conversation_id ?? cid;
+        if (finalCID !== cid) set({ conversationId: finalCID });
+
+        set((s) => ({
+          messages: [...s.messages, { role: "assistant", text: answer }],
           loading: false,
-        });
+        }));
       } catch (err: any) {
         set({
           loading: false,
-          error: err.response?.data?.detail || err.message || "Unknown error",
+          error:
+            err.message ||
+            "Failed to fetch answer. Please try again in a moment.",
         });
       }
     },
