@@ -46,19 +46,31 @@ const Chat: React.FC = () => {
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-4 space-y-6">
-      {error && (
-        <div className="text-red-600">
-          {error}
+    <div className="relative h-screen max-w-4xl mx-auto">
+      {/* scrollable chat area */}
+      <div className="absolute inset-0 flex flex-col">
+        {/* top error banner (doesn’t scroll) */}
+        {error && (
+          <p className="shrink-0 p-4 text-red-600 bg-red-50 border-b">
+            {error}
+          </p>
+        )}
+
+        {/* flex-1 wrapper with overflow — THIS is the only scroll container */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-3">
+          <ChatWindow messages={messages} />
         </div>
-      )}
-      <ChatWindow messages={messages} />
-      <QuestionForm
-        question={question}
-        setQuestion={setQuestion}
-        onSubmit={handleSubmit}
-        disabled={loading}
-      />
+
+        {/* sticky composer */}
+        <div className="sticky bottom-0 bg-white border-t p-4">
+          <QuestionForm
+            question={question}
+            setQuestion={setQuestion}
+            onSubmit={handleSubmit}
+            disabled={loading}
+          />
+        </div>
+      </div>
     </div>
   )
 }
