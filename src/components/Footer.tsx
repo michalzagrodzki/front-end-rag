@@ -1,16 +1,15 @@
 /* src/components/Footer.tsx */
 import React from 'react'
 interface Props {
-  className?: string
   style?: React.CSSProperties            // ← add this
 }
 
-const HomeFooter: React.FC<Props> = ({ className = '', style }) => (
+const HomeFooter: React.FC<Props> = ({ style }) => (
   <footer
-    className={`shrink-0 py-4 text-center text-sm text-[#061423] ${className}`}
+    className={`shrink-0 py-4 text-center text-sm text-gray-500`}
     style={style} 
   >
-    © 2025 RAG Chat Demo · Built with React + Vite + shadcn/ui
+    © 2025 Document Chat · Built with React + Vite + shadcn/ui
   </footer>
 )
 

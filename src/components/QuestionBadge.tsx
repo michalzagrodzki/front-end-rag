@@ -9,8 +9,8 @@ interface Props {
 const QuestionBadge: React.FC<Props> = ({ label, onClick }) => (
   <Badge
     variant="outline"
-    className="cursor-pointer border-blue-300 text-blue-300
-      hover:bg-blue-50"
+    className="cursor-pointer border-gray-400 text-gray-500
+      hover:bg-gray-200"
     onClick={() => onClick(label)}
   >
     {label}

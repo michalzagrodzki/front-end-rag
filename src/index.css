@@ -182,17 +182,14 @@
 }
 
 .home-gradient {
-  background-image:
-    linear-gradient(to bottom,
-      var(--blue-deep) 0%,
-      var(--blue-primary) 35%,
-      var(--blue-bright) 70%,
-      var(--blue-light) 100%);
+  background-image: radial-gradient(circle at 50% 50%,
+      var(--grey-light) 0%,
+      var(--grey-mid) 40%,
+      var(--grey-dark) 80%);
 }
 
 :root {
-  --blue-deep: #243B55;
-  --blue-primary: #365F8A;
-  --blue-bright: #4C7FAE;
-  --blue-light: #aac9e6;
+  --grey-dark: #cccccc;
+  --grey-mid: #d8d8d8;
+  --grey-light: #e4e4e4;
 }

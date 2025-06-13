@@ -64,7 +64,7 @@ const Home: React.FC = () => {
       </main>
 
       <div className="fade-slide-up" style={{ animationDelay: '0.3s' }}>
-        <HomeFooter className="text-gray-700" />
+        <HomeFooter />
       </div>
     </div>
   )
