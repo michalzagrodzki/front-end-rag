@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import ChatWindow from '../components/ChatWindow'
 import { QuestionForm } from '../components/QuestionForm'
 import { useChatStore } from '../store/chatStore'
+import BackHomeButton from '../components/BackHomeButton'
 
 const Chat: React.FC = () => {
   const { conversationId: routeCid } = useParams<{ conversationId?: string }>()
@@ -47,6 +48,7 @@ const Chat: React.FC = () => {
 
   return (
     <div className="relative h-screen max-w-4xl mx-auto">
+      <BackHomeButton />
       {/* scrollable chat area */}
       <div className="absolute inset-0 flex flex-col">
         {/* top error banner (doesn’t scroll) */}

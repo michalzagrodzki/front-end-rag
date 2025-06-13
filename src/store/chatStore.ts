@@ -12,13 +12,13 @@ export interface Message {
 }
 
 interface ChatState {
-  conversationId: string;
+  conversationId?: string;
   messages: Message[];
   loading: boolean;
   error: string | null;
 
   initConversation: () => void;
-  sendMessage: (text: string) => Promise<void>;
+  sendMessage: (text: string) => Promise<string | undefined>;
   loadHistory: (cid: string) => Promise<void>;
   clearChat: () => void;
 }
@@ -30,10 +30,8 @@ export const useChatStore = create<ChatState>()(
     loading: false,
     error: null,
 
-    initConversation: () => {
-      // generate new UUID on first ask; FastAPI will also generate one if missing
-      set(() => ({ conversationId: undefined, messages: [], error: null }));
-    },
+    initConversation: () =>
+      set({ conversationId: undefined, messages: [], error: null }),
 
     async sendMessage(text: string) {
       const userMsg: Message = { id: uuidv4(), role: "user", text };
@@ -63,26 +61,30 @@ export const useChatStore = create<ChatState>()(
         const finalCID = conversation_id ?? cid;
         if (finalCID !== cid) set({ conversationId: finalCID });
 
+        /* 5. replace placeholder with real answer */
         set((s) => ({
           messages: s.messages.map((m) =>
             m.id === placeholderId ? { ...m, text: answer, pending: false } : m
           ),
           loading: false,
         }));
+
+        return finalCID;
       } catch (err: any) {
         set({
           loading: false,
           error:
             err.message || "Failed to fetch answer. Please try again later.",
         });
+        return undefined;
       }
     },
 
-    loadHistory: async (cid) => {
+    async loadHistory(cid) {
       set({ loading: true, error: null });
       try {
         const { data } = await fetchHistory(cid);
-        const history: Message[] = data.flatMap((h) => [
+        const history: Message[] = data.flatMap((h: any) => [
           { id: uuidv4(), role: "user", text: h.question },
           { id: uuidv4(), role: "assistant", text: h.answer },
         ]);
