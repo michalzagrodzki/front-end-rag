@@ -26,7 +26,9 @@ export const QuestionForm: React.FC<QuestionFormProps> = ({
         disabled={disabled}
       />
 
-      <Button type="submit" disabled={disabled}>
+      <Button type="submit" disabled={disabled} className="
+        bg-[#0d47a1] hover:bg-[#093372] active:bg-[#051d3f] text-white
+      ">
         {disabled ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Send'}
       </Button>
     </form>

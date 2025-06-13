@@ -7,7 +7,7 @@ interface Props {
 
 const HomeFooter: React.FC<Props> = ({ className = '', style }) => (
   <footer
-    className={`shrink-0 py-4 text-center text-sm text-gray-400 border-t ${className}`}
+    className={`shrink-0 py-4 text-center text-sm text-[#061423] ${className}`}
     style={style} 
   >
     © 2025 RAG Chat Demo · Built with React + Vite + shadcn/ui
