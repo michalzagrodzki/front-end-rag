@@ -34,7 +34,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ messages }) => {
             msg.role === 'user'
               ? 'self-end bg-blue-500 text-white'
               : 'self-start bg-gray-100 text-gray-900',
-            msg.pending ? 'opacity-70' : 'fade-in'   // ←  here
+            msg.pending ? 'opacity-70' : 'fade-in',
+            msg.animate ? 'fade-in' : ''
           )}
         >
           {msg.pending ? <TypingDots /> : msg.text}

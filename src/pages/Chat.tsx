@@ -22,23 +22,24 @@ const Chat: React.FC = () => {
 
   const [question, setQuestion] = useState('')
 
-  // whenever the route changes, wipe and (re)load history
   useEffect(() => {
-    clearChat()
-    if (routeCid) {
+    if (!routeCid) return
+
+    const needFresh =
+      conversationId !== routeCid || messages.length === 0
+
+    if (needFresh) {
       loadHistory(routeCid)
     }
-  }, [routeCid, loadHistory, clearChat])
+  }, [routeCid, conversationId, messages.length, loadHistory])
 
+  useEffect(() => clearChat, [clearChat])
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!question.trim()) return
 
-    // 1) send via store
     await sendMessage(question)
-
-    // 2) if this was a brand-new chat, push new URL 
-    //    (routeCid was undefined, but store now has one)
     if (!routeCid && conversationId) {
       navigate(`/chat/${conversationId}`, { replace: true })
     }

@@ -1,14 +1,9 @@
 import { Link } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'          // shadcn uses lucide icons
 
-/**
- * A circular icon button that stays fixed at top-right.
- * Clicking it navigates to the Home route ("/").
- */
 const BackHomeButton: React.FC = () => (
   <Link
     to="/"
-    replace
     aria-label="Back to Home"
     className="group fixed top-4 left-4 z-30 p-2 rounded-full bg-white shadow-md
                hover:bg-blue-50 transition-colors"

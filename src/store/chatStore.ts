@@ -8,7 +8,8 @@ export interface Message {
   id: string;
   role: "user" | "assistant";
   text: string;
-  pending?: boolean; // true while backend is processing
+  pending?: boolean;
+  animate?: boolean;
 }
 
 interface ChatState {
@@ -64,7 +65,9 @@ export const useChatStore = create<ChatState>()(
         /* 5. replace placeholder with real answer */
         set((s) => ({
           messages: s.messages.map((m) =>
-            m.id === placeholderId ? { ...m, text: answer, pending: false } : m
+            m.id === placeholderId
+              ? { ...m, text: answer, pending: false, animate: true }
+              : m
           ),
           loading: false,
         }));
@@ -85,8 +88,8 @@ export const useChatStore = create<ChatState>()(
       try {
         const { data } = await fetchHistory(cid);
         const history: Message[] = data.flatMap((h: any) => [
-          { id: uuidv4(), role: "user", text: h.question },
-          { id: uuidv4(), role: "assistant", text: h.answer },
+          { id: uuidv4(), role: "user", text: h.question, animate: false },
+          { id: uuidv4(), role: "assistant", text: h.answer, animate: false },
         ]);
         set({ conversationId: cid, messages: history, loading: false });
       } catch (err: any) {
