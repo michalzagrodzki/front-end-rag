@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import ChatWindow from '../components/Chat/ChatWindow'
-import { QuestionForm } from '../components/QuestionForm'
+import { QuestionForm } from '../components/common/QuestionForm'
 import { useChatStore } from '../store/chatStore'
 import BackHomeButton from '../components/Chat/BackHomeButton'
 import ErrorBanner from '@/components/Chat/ErrorBanner'

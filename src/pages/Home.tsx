@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { QuestionForm } from '../components/QuestionForm';
+import { QuestionForm } from '../components/common/QuestionForm';
 import { Card, CardContent } from '@/components/ui';
 import { useChatStore } from '@/store/chatStore';
-import HomeHeader from '../components/Header'
-import HomeFooter from '../components/Footer'
-import CommonQuestionsRow from '../components/CommonQuestionsRow'
-import ProcessingCard from '../components/ProcessingCard'
+import HomeHeader from '../components/Home/Header'
+import HomeFooter from '../components/Home/Footer'
+import CommonQuestionsRow from '../components/Home/CommonQuestionsRow'
+import ProcessingCard from '../components/Home/ProcessingCard'
 
 const Home: React.FC = () => {
   const { sendMessage, clearChat, loading } = useChatStore()
