@@ -1,10 +1,12 @@
 // src/pages/Chat.tsx
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import ChatWindow from '../components/ChatWindow'
+import ChatWindow from '../components/Chat/ChatWindow'
 import { QuestionForm } from '../components/QuestionForm'
 import { useChatStore } from '../store/chatStore'
-import BackHomeButton from '../components/BackHomeButton'
+import BackHomeButton from '../components/Chat/BackHomeButton'
+import ErrorBanner from '@/components/Chat/ErrorBanner'
+import LoadingState from '@/components/Chat/LoadingState'
 
 const Chat: React.FC = () => {
   const { conversationId: routeCid } = useParams<{ conversationId?: string }>()
@@ -48,43 +50,25 @@ const Chat: React.FC = () => {
   }
 
   return (
-    <div className="relative min-h-screen flex flex-col overflow-hidden
-      home-gradient bg-gradient-reveal">
+    <div className="min-h-screen bg-gray-100">
       <BackHomeButton />
-      <main>
-        {error && (
-          <div className="mb-4 p-4 text-red-600 bg-red-50 border border-red-200 
-            rounded-lg shadow-sm fade-slide-up">
-            {error}
-          </div>
-        )}
+      <main className="flex flex-col">
+        <div className="flex-1 max-w-4xl mx-auto w-full fade-slide-up" style={{ animationDelay: '0.15s' }}>
+          {error && (
+            <ErrorBanner error={error} />
+          )}
 
-        {/* Chat messages container - only show when not loading history */}
-        {!loading && (
-          <div className="flex-1 overflow-y-auto bg-white/80 backdrop-blur-sm 
-            rounded-xl shadow-2xl p-4 fade-slide-up" 
-            style={{ animationDelay: '0.15s' }}>
+          {(messages.length > 0 || !loading) && (
             <ChatWindow messages={messages} />
-          </div>
-        )}
-        
-        {/* Loading state for history */}
-        {loading && messages.length === 0 && (
-          <div className="flex-1 flex items-center justify-center bg-white/80 backdrop-blur-sm 
-            rounded-xl shadow-2xl p-4 fade-slide-up"
-            style={{ animationDelay: '0.15s' }}>
-            <div className="text-center">
-              <div className="inline-flex items-center space-x-2 text-gray-600">
-                <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                <span className="text-lg">Loading conversation...</span>
-              </div>
-            </div>
-          </div>
-        )}
+          )}
+          
+          {(loading && messages.length === 0) && (
+            <LoadingState />
+          )}
+        </div>
       </main>
-      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md 
-        border-t border-gray-200 shadow-2xl p-4 fade-slide-up z-20" 
-        style={{ animationDelay: '0.3s' }}>
+      <div className="fixed bottom-0 left-0 right-0 bg-white/95 border-gray-200 p-4 fade-slide-up z-20" 
+        style={{ animationDelay: '0,5s' }}>
         <div className="max-w-4xl mx-auto">
           <QuestionForm
             question={question}

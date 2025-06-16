@@ -44,22 +44,22 @@ const Home: React.FC = () => {
       <HomeHeader className="fade-slide-up text-white" />
       <main className="flex-1">
         <div className="max-w-2xl mx-auto p-4 fade-slide-up" style={{ animationDelay: '0.15s' }}>
-        <CommonQuestionsRow onSelect={handleBadgeSelect} />
-        {!showProcessing ? (
-            <Card className="bg-gray-100 shadow-2xl animate-slide-up-in">
-              <CardContent>
-                <h2 className="text-xl font-bold mb-4">Ask a question</h2>
-                <QuestionForm
-                  question={question}
-                  setQuestion={setQuestion}
-                  onSubmit={handleSubmit}
-                  disabled={loading}
-                />
-              </CardContent>
-            </Card>
-          ) : (
-            <ProcessingCard question={question || '…'} />
-          )}
+          <CommonQuestionsRow onSelect={handleBadgeSelect} />
+          {!showProcessing ? (
+              <Card className="bg-gray-100 shadow-2xl animate-slide-up-in">
+                <CardContent>
+                  <h2 className="text-xl font-bold mb-4">Ask a question</h2>
+                  <QuestionForm
+                    question={question}
+                    setQuestion={setQuestion}
+                    onSubmit={handleSubmit}
+                    disabled={loading}
+                  />
+                </CardContent>
+              </Card>
+            ) : (
+              <ProcessingCard question={question || '…'} />
+            )}
         </div>
       </main>
 
