@@ -1,4 +1,4 @@
-import React from 'react'
+import { memo, useCallback } from 'react';
 import QuestionBadge from './QuestionBadge'
 
 interface Props {
@@ -16,12 +16,23 @@ const commonQuestions = [
   'What implications do the results of this research have in real-world settings?'
 ] as const
 
-const CommonQuestionsRow: React.FC<Props> = ({ onSelect }) => (
-  <div className="flex flex-wrap justify-center gap-2 mb-6">
-    {commonQuestions.map((q) => (
-      <QuestionBadge key={q} label={q} onClick={onSelect} />
-    ))}
-  </div>
-)
+const CommonQuestionsRow = memo<Props>(({ onSelect }) => {
+  // Memoize the callback to prevent QuestionBadge re-renders
+  const handleSelect = useCallback((question: string) => {
+    onSelect(question);
+  }, [onSelect]);
+
+  return (
+    <div className="flex flex-wrap justify-center gap-2 mb-6">
+      {commonQuestions.map((q) => (
+        <QuestionBadge 
+          key={q} 
+          label={q} 
+          onClick={handleSelect} 
+        />
+      ))}
+    </div>
+  );
+});
 
 export default CommonQuestionsRow

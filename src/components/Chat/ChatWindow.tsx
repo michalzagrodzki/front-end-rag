@@ -1,5 +1,5 @@
 // src/components/ChatWindow.tsx
-import React, { useEffect, useRef } from 'react'
+import React, { memo, useEffect, useRef } from 'react'
 import type { Message } from './../../store/chatStore'
 import { cn } from '@/lib/utils'
 
@@ -7,13 +7,45 @@ export interface ChatWindowProps {
   messages: Message[]
 }
 
-const TypingDots = () => (
-  <div className="flex space-x-1">
+const TypingDots = memo(() => (
+  <div className="flex space-x-1 p-2">
     <span className="w-2 h-2 rounded-full bg-gray-400 animate-bounce [animation-delay:-.3s]" />
     <span className="w-2 h-2 rounded-full bg-gray-400 animate-bounce [animation-delay:-.15s]" />
     <span className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" />
   </div>
-)
+));
+
+const MessageItem = memo<{ message: Message }>(({ message }) => {
+  return (
+    <div
+      className={cn(
+        'flex w-full fade-slide-up',
+        message.role === 'user' ? 'justify-end' : 'justify-start'
+      )}
+    >
+      <div
+        className={cn(
+          'max-w-[85%] px-6 py-3 rounded-2xl shadow-md transition-all duration-300 border',
+          message.role === 'user'
+            ? 'bg-[#0d47a1] text-white shadow-gray-200'
+            : 'bg-white/90 text-gray-800',
+          message.pending ? 'opacity-70 scale-95' : 'opacity-100 scale-100',
+          message.animate ? 'animate-fade-in' : ''
+        )}
+      >
+        {message.pending ? (
+          <div className="flex items-center space-x-2 fade-slide-up">
+            <TypingDots />
+          </div>
+        ) : (
+          <div className="whitespace-pre-wrap leading-relaxed">
+            {message.text}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+});
 
 const ChatWindow: React.FC<ChatWindowProps> = ({ messages }) => {
   const bottomRef = useRef<HTMLDivElement>(null)
@@ -40,35 +72,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ messages }) => {
       ) : (
         <div className="flex flex-col space-y-4 p-2 pb-16">
           {messages.map((msg) => (
-            <div
-              key={msg.id}
-              className={cn(
-                'flex w-full fade-slide-up',
-                msg.role === 'user' ? 'justify-end' : 'justify-start'
-              )}
-            >
-              <div
-                className={cn(
-                  'max-w-[85%] px-6 py-3 rounded-2xl shadow-md transition-all duration-300',
-                  'border',
-                  msg.role === 'user'
-                    ? 'bg-[#0d47a1] text-white shadow-gray-200'
-                    : 'bg-white/90 text-gray-800',
-                  msg.pending ? 'opacity-70 scale-95' : 'opacity-100 scale-100',
-                  msg.animate ? 'animate-fade-in' : ''
-                )}
-              >
-                {msg.pending ? (
-                  <div className="flex items-center space-x-2 fade-slide-up">
-                    <TypingDots />
-                  </div>
-                ) : (
-                  <div className="whitespace-pre-wrap leading-relaxed">
-                    {msg.text}
-                  </div>
-                )}
-              </div>
-            </div>
+            <MessageItem key={msg.id} message={ msg} />
           ))}
           <div ref={bottomRef} />
         </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { QuestionForm } from '../components/common/QuestionForm';
 import { Card, CardContent } from '@/components/ui';
@@ -19,24 +19,24 @@ const Home: React.FC = () => {
     clearChat()
   }, [clearChat])
 
-  const sendAndNavigate = async (q: string) => {
+  const sendAndNavigate = useCallback(async (q: string) => {
     setShow(true)
     setQuestion(q)
-    const id = await sendMessage(q)
+    const id = await sendMessage(q);
     if (id) navigate(`/chat/${id}`, { replace: true })
-  }
+  }, [sendMessage, navigate])
   
-  /* handleSubmit just delegates to the store */
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!question.trim()) return
-    sendAndNavigate(question)
-  }
+  const handleSubmit = useCallback((e: React.FormEvent) => {
+    e.preventDefault();
+    if (!question.trim()) return;
+    sendAndNavigate(question);
+  }, [question, sendAndNavigate]);
 
-  const handleBadgeSelect = (q: string) => {
-    if (loading) return
-    sendAndNavigate(q)
-  }
+  const handleBadgeSelect = useCallback((q: string) => {
+    if (loading) return;
+    sendAndNavigate(q);
+  }, [loading, sendAndNavigate]);
+
 
   return (
     <div className="relative flex min-h-screen flex-col overflow-hidden
